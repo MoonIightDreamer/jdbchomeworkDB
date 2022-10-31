@@ -9,12 +9,9 @@ import java.sql.Statement;
 
 public class JdbcUserRepository implements UserRepository{
 
-    private Connection connection;
-
     private Statement statement;
 
-    public JdbcUserRepository(Connection connection, Statement statement) {
-        this.connection = connection;
+    public JdbcUserRepository(Statement statement) {
         this.statement = statement;
     }
 
@@ -27,17 +24,21 @@ public class JdbcUserRepository implements UserRepository{
             user.setName(rs.getString("name"));
             return user;
         } else {
-            throw new RuntimeException("No such user found!");
+            return null;
         }
     }
 
     @Override
-    public boolean delete(Integer id) {
-        return false;
+    public boolean delete(Integer id) throws SQLException {
+        statement.executeUpdate("DELETE FROM users WHERE id=" + id);
+        return get(id) == null;
     }
 
     @Override
-    public boolean create(User user) {
-        return false;
+    public boolean create(User user) throws SQLException {
+        if(user.isNew()) {
+            statement.executeUpdate("INSERT INTO users(name) VALUES('" + user.getName() + "')");
+        }
+        return user.isNew();
     }
 }

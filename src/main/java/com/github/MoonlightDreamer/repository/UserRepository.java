@@ -8,7 +8,7 @@ public interface UserRepository {
 
     User get(Integer id) throws SQLException;
 
-    boolean delete(Integer id);
+    boolean delete(Integer id) throws SQLException;
 
-    boolean create(User user);
+    boolean create(User user) throws SQLException;
 }
