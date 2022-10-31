@@ -1,6 +1,7 @@
 package com.github.MoonlightDreamer;
 
 import com.github.MoonlightDreamer.model.User;
+import com.github.MoonlightDreamer.repository.JdbcUserRepository;
 import org.postgresql.Driver;
 
 import java.sql.*;
@@ -13,14 +14,8 @@ public class Main {
     public static void main(String[] args) {
         try(Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             Statement statement = connection.createStatement()) {
-            ResultSet rs = statement.executeQuery("SELECT * FROM users");
-            while(rs.next()) {
-                User user = new User();
-                user.setId(rs.getInt(1));
-                user.setName(rs.getString(2));
-                System.out.println(user);
-            }
-
+            JdbcUserRepository repository = new JdbcUserRepository(connection, statement);
+            System.out.println(repository.get(100001));
         } catch (SQLException e) {
             System.out.println("Failed. " + e.getMessage());
         }
