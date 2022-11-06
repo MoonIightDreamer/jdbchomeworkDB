@@ -8,16 +8,20 @@ import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConsoleInputReader {
     private static final Scanner sc = new Scanner(System.in);
     private UserRepository repository;
+    private static final Logger log = LoggerFactory.getLogger(ConsoleInputReader.class);
 
     public ConsoleInputReader(UserRepository repository) {
         this.repository = repository;
     }
 
     public void proceedUserInput(){
-        System.out.print("Enter 1 to GET, 2 to CREATE, 3 to DELETE: ");
+        log.info("Enter 1 to GET, 2 to CREATE, 3 to DELETE: ");
         String choice = sc.nextLine();
         switch (choice) {
             case "1":
@@ -36,25 +40,32 @@ public class ConsoleInputReader {
     }
 
     private void get() {
-        System.out.print("Enter ID: ");
+        log.info("Enter ID: ");
         try {
-            Optional<User> user = repository.get(sc.nextInt());
-            if (user.isPresent()) System.out.println(user.get());
-            else System.out.println("No such user found!");
+            int id = sc.nextInt();
+            Optional<User> user = repository.get(id);
+            if (user.isPresent()) {
+                log.info("Successfully got user = {}", user.get());
+            }
+            else {
+                log.info("No user with id = {}", id);
+            }
         } catch (SQLException e) {
-            System.out.println("Failed. " + e.getMessage());
+            log.info(e.getMessage());
         } catch (InputMismatchException e) {
-            System.out.println("ID must be an integer number.");
+            log.info("ID must be an integer number.");
         }
     }
 
     private void create() {
         System.out.print("Enter name: ");
         try {
-            if (repository.create(new User(null, sc.nextLine())))
-                System.out.println("Created successfully");
+            User user = new User(null, sc.nextLine());
+            if (repository.create(user)) {
+                log.info("Created new user with id = {} and name = {}", user.getId(), user.getName());
+            }
         } catch (SQLException e) {
-            System.out.println("Failed. " + e.getMessage());
+            log.info(e.getMessage());
         }
     }
 
@@ -62,11 +73,11 @@ public class ConsoleInputReader {
         try {
             System.out.print("Enter ID: ");
             if (repository.delete(sc.nextInt()))
-                System.out.println("Deleted successfully");
+                log.info("Deleted successfully");
         } catch (SQLException e) {
-            System.out.println("Failed. " + e.getMessage());
+            log.info("Failed. " + e.getMessage());
         } catch (InputMismatchException e) {
-            System.out.println("ID must be an integer number.");
+            log.info("ID must be an integer number.");
         }
     }
 }

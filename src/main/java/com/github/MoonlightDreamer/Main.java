@@ -1,12 +1,9 @@
 package com.github.MoonlightDreamer;
 
-import com.github.MoonlightDreamer.model.User;
 import com.github.MoonlightDreamer.repository.JdbcUserRepository;
 import com.github.MoonlightDreamer.util.ConsoleInputReader;
-import org.postgresql.Driver;
 
 import java.sql.*;
-import java.util.Scanner;
 
 public class Main {
     private static final String URL = "jdbc:postgresql://localhost:5432/postgres";

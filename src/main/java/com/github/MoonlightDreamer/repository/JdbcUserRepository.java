@@ -20,7 +20,6 @@ public class JdbcUserRepository implements UserRepository {
     public Optional<User> get(Integer id) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement("SELECT id, name FROM users WHERE id=?")) {
             ps.setInt(1, id);
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     User user = new User();
